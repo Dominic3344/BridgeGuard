@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BridgeGuard — River Link Bridge (KL-001) Monitoring</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌉</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sim-banner">
+  <span class="sim-dot"></span>
+  SIMULATED DATA — FOR DEMONSTRATION ONLY. No live sensors are connected.
+</div>
+
+<div class="app" id="app">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <div class="brand-text">
+          <div class="brand-name">BridgeGuard</div>
+          <div class="brand-sub">Structural Health Monitoring</div>
+        </div>
+      </div>
+      <div class="bridge-id-block">
+        <div class="bridge-name" id="bridgeName">River Link Bridge</div>
+        <div class="bridge-code">ID <span id="bridgeId">KL-001</span> · Kerala Highway Network</div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="badge sim-badge">
+        <span class="pulse-dot"></span> SIMULATION MODE
+      </div>
+      <div class="status-chip" id="statusChip">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusLabel">NORMAL</span>
+      </div>
+      <div class="clock" id="liveClock">00:00:00</div>
+      <button class="btn btn-ghost" id="presentationBtn" title="Toggle presentation mode">Presentation Mode</button>
+      <button class="btn btn-ghost" id="resetBtn" title="Reset simulation to baseline">Reset</button>
+    </div>
+  </header>
+
+  <div class="body-shell">
+
+    <!-- ============ SIDE NAV ============ -->
+    <nav class="sidenav" id="sidenav">
+      <button class="nav-item active" data-tab="dashboard">
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-item" data-tab="bridgeview">
+        <span class="nav-label">Bridge View</span>
+      </button>
+      <button class="nav-item" data-tab="analytics">
+        <span class="nav-label">Analytics</span>
+      </button>
+      <button class="nav-item" data-tab="material">
+        <span class="nav-label">Material Health</span>
+      </button>
+      <button class="nav-item" data-tab="alerts">
+        <span class="nav-label">Alerts</span>
+        <span class="nav-count" id="navAlertCount">0</span>
+      </button>
+
+      <div class="sidenav-footer">
+        <div class="scenario-title">Scenario Simulator</div>
+        <div class="scenario-grid">
+          <button class="scn-btn" data-scenario="normal">Normal Operation</button>
+          <button class="scn-btn" data-scenario="heavy">Heavy Vehicle Event</button>
+          <button class="scn-btn" data-scenario="vibration">High Vibration</button>
+          <button class="scn-btn" data-scenario="tilt">Pier Tilt</button>
+          <button class="scn-btn" data-scenario="anomaly">Structural Anomaly</button>
+          <button class="scn-btn" data-scenario="sensorfail">Sensor Failure</button>
+          <button class="scn-btn scn-critical" data-scenario="critical">Critical Event</button>
+        </div>
+        <div class="active-scenario">Active: <span id="activeScenarioLabel">Normal Operation</span></div>
+      </div>
+    </nav>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="content">
+
+      <!-- ===== DASHBOARD TAB ===== -->
+      <section class="tab-panel active" id="tab-dashboard">
+
+        <div class="grid-top">
+          <div class="card health-card">
+            <div class="card-head">
+              <span>Overall Bridge Health Score</span>
+              <span class="chip-inline" id="healthTrendChip">stable</span>
+            </div>
+            <div class="health-body">
+              <div class="health-score-box">
+                <div class="health-score-num">
+                  <span id="healthScoreNum">98</span><span class="health-out-of">/100</span>
+                </div>
+                <div class="health-bar">
+                  <div class="health-bar-fill" id="healthBarFill"></div>
+                </div>
+              </div>
+              <div class="health-meta">
+                <div class="health-status-line">
+                  Structural state: <strong id="healthStatusText">NORMAL</strong>
+                </div>
+                <p class="health-desc" id="healthDesc">All monitored parameters are within expected baseline ranges. No anomalies detected across the sensor network.</p>
+                <div class="confidence-line">
+                  System confidence: <span id="systemConfidence">97%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card pipeline-card">
+            <div class="card-head"><span>Monitoring Pipeline</span></div>
+            <div class="pipeline-flow" id="pipelineFlow">
+              <div class="pipe-node active" data-stage="sensors">Sensors</div>
+              <div class="pipe-arrow">→</div>
+              <div class="pipe-node" data-stage="esp32">ESP32</div>
+              <div class="pipe-arrow">→</div>
+              <div class="pipe-node" data-stage="baseline">Baseline</div>
+              <div class="pipe-arrow">→</div>
+              <div class="pipe-node" data-stage="fusion">Fusion</div>
+              <div class="pipe-arrow">→</div>
+              <div class="pipe-node" data-stage="anomaly">Anomaly Detection</div>
+              <div class="pipe-arrow">→</div>
+              <div class="pipe-node" data-stage="alert">Early Warning</div>
+            </div>
+            <div class="pipeline-note">Illustrative data flow for the proposed production system. This prototype simulates the outcome of each stage.</div>
+          </div>
+        </div>
+
+        <div class="grid-mid">
+          <div class="card sensors-card">
+            <div class="card-head">
+              <span>Live Sensor Network</span>
+              <span class="chip-inline" id="sensorsOnlineChip">5 / 5 online</span>
+            </div>
+            <div class="sensor-cards" id="sensorCards"><!-- injected --></div>
+          </div>
+        </div>
+
+        <div class="grid-bottom">
+          <div class="card chart-card">
+            <div class="card-head">
+              <span>Live Sensor Trend</span>
+              <div class="chart-legend" id="chartLegend"></div>
+            </div>
+            <canvas id="liveChart" width="900" height="260"></canvas>
+          </div>
+
+          <div class="card alerts-card">
+            <div class="card-head">
+              <span>Active Alerts</span>
+              <span class="chip-inline" id="activeAlertCount">0 active</span>
+            </div>
+            <div class="alert-list" id="activeAlertList">
+              <div class="empty-state">No active alerts. Bridge is operating within baseline parameters.</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===== BRIDGE VIEW TAB ===== -->
+      <section class="tab-panel" id="tab-bridgeview">
+        <div class="card bridgeview-card">
+          <div class="card-head">
+            <span>Structural Schematic — River Link Bridge (KL-001)</span>
+            <span class="chip-inline">Hover or tap a marker for live reading</span>
+          </div>
+          <div class="bridgeview-body">
+            <svg viewBox="0 0 1000 420" class="bridge-svg" id="bridgeSvg" xmlns="http://www.w3.org/2000/svg">
+              <!-- water -->
+              <rect x="0" y="330" width="1000" height="90" fill="url(#waterGrad)"/>
+              <defs>
+                <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0b2a36"/>
+                  <stop offset="100%" stop-color="#071a22"/>
+                </linearGradient>
+              </defs>
+              <!-- piers -->
+              <rect x="230" y="230" width="26" height="150" class="pier-shape"/>
+              <rect x="744" y="230" width="26" height="150" class="pier-shape"/>
+              <!-- deck -->
+              <rect x="60" y="210" width="880" height="22" class="deck-shape"/>
+              <!-- cables/trusses (decorative, suspension look) -->
+              <path d="M60 210 Q 500 60 940 210" class="cable-shape"/>
+              <g id="hangerLines"></g>
+              <!-- abutments -->
+              <rect x="30" y="230" width="40" height="150" class="pier-shape"/>
+              <rect x="930" y="230" width="40" height="150" class="pier-shape"/>
+
+              <!-- sensor markers (positions tuned to schematic) -->
+              <g class="sensor-marker" data-sensor="ACC-DECK-01" transform="translate(500,205)">
+                <circle r="10" class="marker-dot"/>
+                <circle r="18" class="marker-ring"/>
+              </g>
+              <g class="sensor-marker" data-sensor="TILT-DECK-02" transform="translate(330,205)">
+                <circle r="10" class="marker-dot"/>
+                <circle r="18" class="marker-ring"/>
+              </g>
+              <g class="sensor-marker" data-sensor="TILT-PIER-03" transform="translate(243,232)">
+                <circle r="10" class="marker-dot"/>
+                <circle r="18" class="marker-ring"/>
+              </g>
+              <g class="sensor-marker" data-sensor="LOAD-GIRDER-04" transform="translate(670,224)">
+                <circle r="10" class="marker-dot"/>
+                <circle r="18" class="marker-ring"/>
+              </g>
+              <g class="sensor-marker" data-sensor="TEMP-DECK-05" transform="translate(800,205)">
+                <circle r="10" class="marker-dot"/>
+                <circle r="18" class="marker-ring"/>
+              </g>
+            </svg>
+
+            <div class="bridge-sensor-panel" id="bridgeSensorPanel">
+              <div class="panel-hint">Select a sensor marker on the schematic to inspect its live reading.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ANALYTICS TAB ===== -->
+      <section class="tab-panel" id="tab-analytics">
+        <div class="grid-analytics-top">
+          <div class="card">
+            <div class="card-head"><span>Baseline Deviation by Sensor</span></div>
+            <div class="deviation-bars" id="deviationBars"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Sensor Confidence</span></div>
+            <div class="confidence-bars" id="confidenceBars"></div>
+          </div>
+        </div>
+
+        <div class="card fusion-card">
+          <div class="card-head"><span>Anomaly-Fusion Logic</span></div>
+          <div class="fusion-flow">
+            <div class="pipe-node" data-stage="a-sensors">Sensors</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node" data-stage="a-esp32">ESP32</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node" data-stage="a-baseline">Baseline Comparison</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node" data-stage="a-fusion">Sensor Fusion</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node" data-stage="a-anomaly">Anomaly Detection</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node" data-stage="a-alert">Alert</div>
+          </div>
+
+          <div class="fusion-classification" id="fusionClassification">
+            <!-- injected classification card -->
+          </div>
+
+          <div class="fusion-explainer">
+            <div class="fx-item">
+              <div class="fx-title">Bridge anomaly</div>
+              <div class="fx-desc">Multiple independent sensors move away from baseline together, in a correlated pattern — treated as a structural signal rather than a single faulty device.</div>
+            </div>
+            <div class="fx-item">
+              <div class="fx-title">Sensor fault</div>
+              <div class="fx-desc">One sensor reports an implausible value or drops offline while every other sensor stays within baseline — fusion logic isolates it as a hardware issue, not a structural one.</div>
+            </div>
+            <div class="fx-item">
+              <div class="fx-title">Possible structural event</div>
+              <div class="fx-desc">Several independent sensors corroborate the same anomaly at once, raising confidence that inspection should be prioritised.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== MATERIAL HEALTH TAB ===== -->
+      <section class="tab-panel" id="tab-material">
+        <div class="material-disclaimer">
+          These are illustrative demo records for presentation purposes only — not actual engineering measurements of any real structure.
+        </div>
+        <div class="card">
+          <div class="card-head"><span>Non-Destructive Testing (NDT) &amp; Inspection Records — Demo Data</span></div>
+          <table class="material-table" id="materialTable"></table>
+        </div>
+      </section>
+
+      <!-- ===== ALERTS TAB ===== -->
+      <section class="tab-panel" id="tab-alerts">
+        <div class="card">
+          <div class="card-head">
+            <span>Event &amp; Incident Timeline</span>
+            <button class="btn btn-accent" id="exportJsonBtn">Export Demo JSON</button>
+          </div>
+          <div class="timeline" id="timelineList"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="app-footer">
+    BridgeGuard demo prototype · All readings are simulated · Not for structural safety certification
+  </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
