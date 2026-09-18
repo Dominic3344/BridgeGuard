@@ -18,7 +18,7 @@
   ];
 
   const CHART_SENSOR_IDS = ["ACC-DECK-01", "TILT-PIER-03", "LOAD-GIRDER-04"];
-  const CHART_COLORS = { "ACC-DECK-01": "#35d7d1", "TILT-PIER-03": "#f2b83d", "LOAD-GIRDER-04": "#7fb8ff" };
+  const CHART_COLORS = { "ACC-DECK-01": "#17766f", "TILT-PIER-03": "#c79a18", "LOAD-GIRDER-04": "#2f6fb0" };
   const HISTORY_LEN = 44;
 
   function mid(range) { return (range[0] + range[1]) / 2; }
@@ -402,9 +402,9 @@
 
     const bar = document.getElementById("healthBarFill");
     bar.style.width = score + "%";
-    bar.style.background = score >= 85 ? "#2fa8a0" : score >= 55 ? "#c9952c" : "#c0453f";
+    bar.style.background = score >= 85 ? "#17766f" : score >= 55 ? "#c79a18" : "#c0332c";
     const numEl = document.getElementById("healthScoreNum");
-    numEl.style.color = score >= 85 ? "#d8e3e8" : score >= 55 ? "#d9ab4a" : "#d96a63";
+    numEl.style.color = score >= 85 ? "#1d2329" : score >= 55 ? "#8a6710" : "#a32b25";
 
     const trendChip = document.getElementById("healthTrendChip");
     const delta = state.healthScore - state.prevHealthScore;
@@ -492,7 +492,7 @@
     ctx.clearRect(0, 0, w, h);
 
     // grid
-    ctx.strokeStyle = "rgba(255,255,255,0.05)";
+    ctx.strokeStyle = "#e2e7eb";
     ctx.lineWidth = 1;
     for (let i = 0; i <= 4; i++) {
       const y = (h / 4) * i + 0.5;
@@ -567,8 +567,8 @@
     panel.innerHTML =
       '<div class="bsp-id">' + cfg.id + '</div>' +
       '<div class="bsp-name">' + cfg.name + '</div>' +
-      '<div class="bsp-value" style="color:' + (sev === "critical" || sev === "offline" ? "#d96a63" : sev === "warning" ? "#d9ab4a" : "#57bdb5") + '">' +
-        fmt(val, cfg.decimals) + '<span style="font-size:14px;color:#7e8c98"> ' + cfg.unit + '</span></div>' +
+      '<div class="bsp-value" style="color:' + (sev === "critical" || sev === "offline" ? "#a32b25" : sev === "warning" ? "#8a6710" : "#17766f") + '">' +
+        fmt(val, cfg.decimals) + '<span style="font-size:14px;color:#6d7a85"> ' + cfg.unit + '</span></div>' +
       '<div class="bsp-row"><span>Status</span><span>' + (offline ? "OFFLINE — estimated" : sev.toUpperCase()) + '</span></div>' +
       '<div class="bsp-row"><span>Baseline range</span><span>' + cfg.baseline[0] + '–' + cfg.baseline[1] + ' ' + cfg.unit + '</span></div>' +
       '<div class="bsp-row"><span>Confidence</span><span>' + Math.round(s.confidence) + '%</span></div>' +
@@ -600,7 +600,7 @@
       const conf = s.status === "offline" ? s.confidence : s.confidence;
       crow.innerHTML =
         '<div class="dev-label">' + cfg.id + '</div>' +
-        '<div class="dev-track"><div class="dev-fill" style="width:' + conf + '%; background:' + (s.status === "offline" ? "#c9952c" : "#2fa8a0") + '"></div></div>' +
+        '<div class="dev-track"><div class="dev-fill" style="width:' + conf + '%; background:' + (s.status === "offline" ? "#c79a18" : "#17766f") + '"></div></div>' +
         '<div class="dev-pct">' + Math.round(conf) + '%</div>';
       confWrap.appendChild(crow);
     });
